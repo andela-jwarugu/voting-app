@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "mocha --compilers js:babel-register"
+    "start": "babel-node index.js",
+    "test": "mocha --compilers js:babel-register",
+    "test:watch": "npm run test -- --watch"
   },
   "babel": {
     "presets": [
@@ -30,6 +32,8 @@
     "mocha": "^3.1.2"
   },
   "dependencies": {
-    "immutable": "^3.8.1"
+    "immutable": "^3.8.1",
+    "redux": "^3.6.0",
+    "socket.io": "^1.5.0"
   }
 }
