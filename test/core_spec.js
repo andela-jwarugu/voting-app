@@ -27,41 +27,9 @@ describe('application logic', () => {
         entries: List.of('Rich Kids')
       }));
     });
-  });
 
-  describe('vote', () => {
-    it('creates a tally for the voted entry', () => {
+    it('puts winner of current vote back to entries', () => {
       const state = Map({
-        vote: Map({
-          pair: List.of('Wedding Ringer', 'Legend of Tarzan')
-        }),
-        entries: List()
-      });
-      const nextState = vote(state, 'Wedding Ringer');
-      expect(nextState).to.equal(Map({
-        vote: Map({
-          pair: List.of('Wedding Ringer', 'Legend of Tarzan'),
-          tally: Map({
-            'Wedding Ringer': 1
-          })
-        }),
-        entries: List()
-      }));
-    });
-
-    it('adds to an existing tally', () => {
-      const state = Map({
-        vote: Map({
-          pair: List.of('Wedding Ringer', 'Legend of Tarzan'),
-          tally: Map({
-            'Wedding Ringer': 2,
-            'Legend of Tarzan': 1
-          })
-        }),
-        entries: List()
-      });
-      const nextState = vote(state, 'Wedding Ringer');
-      expect(nextState).to.equal(Map({
         vote: Map({
           pair: List.of('Wedding Ringer', 'Legend of Tarzan'),
           tally: Map({
@@ -69,7 +37,84 @@ describe('application logic', () => {
             'Legend of Tarzan': 1
           })
         }),
+        entries: List.of('Rich Kids', 'Billions', 'Power')
+      });
+      const nextState = next(state);
+      expect(nextState).to.equal(Map({
+        vote: Map({
+          pair: List.of('Rich Kids', 'Billions')
+        }),
+        entries: List.of('Power', 'Wedding Ringer')
+      }));
+    });
+
+    it('puts both from tied back to entries', () => {
+      const state = Map({
+        vote: Map({
+          pair: List.of('Wedding Ringer', 'Legend of Tarzan'),
+          tally: Map({
+            'Wedding Ringer': 3,
+            'Legend of Tarzan': 3
+          })
+        }),
+        entries: List.of('Rich Kids', 'Billions', 'Power')
+      });
+      const nextState = next(state);
+      expect(nextState).to.equal(Map({
+        vote: Map({
+          pair: List.of('Rich Kids', 'Billions')
+        }),
+        entries: List.of('Power', 'Wedding Ringer', 'Legend of Tarzan')
+      }));
+    });
+
+    it('marks winner when just one entry is left', () => {
+      const state = Map({
+        vote: Map({
+          pair: List.of('Wedding Ringer', 'Legend of Tarzan'),
+          tally: Map({
+            'Wedding Ringer': 4,
+            'Legend Of Tarzan': 2
+          })
+        }),
         entries: List()
+      });
+      const nextState = next(state);
+      expect(nextState).to.equal(Map({
+        winner: 'Wedding Ringer'
+      }));
+    });
+  });
+
+  describe('vote', () => {
+    it('creates a tally for the voted entry', () => {
+      const state = Map({
+          pair: List.of('Wedding Ringer', 'Legend of Tarzan')
+      });
+      const nextState = vote(state, 'Wedding Ringer');
+      expect(nextState).to.equal(Map({
+        pair: List.of('Wedding Ringer', 'Legend of Tarzan'),
+        tally: Map({
+          'Wedding Ringer': 1
+        })
+      }));
+    });
+
+    it('adds to an existing tally', () => {
+      const state = Map({
+        pair: List.of('Wedding Ringer', 'Legend of Tarzan'),
+        tally: Map({
+          'Wedding Ringer': 2,
+          'Legend of Tarzan': 1
+        })
+      });
+      const nextState = vote(state, 'Wedding Ringer');
+      expect(nextState).to.equal(Map({
+        pair: List.of('Wedding Ringer', 'Legend of Tarzan'),
+        tally: Map({
+          'Wedding Ringer': 3,
+          'Legend of Tarzan': 1
+        })
       }));
     });
   });
